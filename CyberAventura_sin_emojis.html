@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5efff">
+<title>CyberAventura: Guardianes de Internet</title>
+<style>
+:root{--bg:#f5efff;--ink:#30283d;--muted:#51475f;--purple:#673b9b;--purple2:#ead9ff;--border:#cbb9dd;--green:#24683f;--greenbg:#ddf7e7;--red:#963444;--redbg:#fff4f5;--shadow:0 16px 45px rgba(100,73,135,.12);--radius:18px}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:18px;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(700px 450px at 10% 5%,rgba(221,190,255,.48),transparent 60%),radial-gradient(700px 450px at 90% 20%,rgba(178,244,255,.40),transparent 60%),radial-gradient(700px 450px at 50% 100%,rgba(255,220,238,.38),transparent 60%),linear-gradient(135deg,#f5efff,#edfaff 48%,#fff4fa)}
+button{font:inherit}
+.app{width:min(1100px,100%);margin:auto;display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px}
+header{grid-column:1/-1;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:6px 2px}
+.title{display:flex;flex-direction:column;gap:6px;min-width:0}
+h1{margin:0;font-size:clamp(21px,3vw,29px);letter-spacing:-.4px;color:#352447}
+h1 span{color:#673b9b}
+.title p{margin:0;color:#4d435d;font-size:14px;line-height:1.45;max-width:720px}
+.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.btn{color:#352447;background:#fff;border:2px solid #c5b2d8;border-radius:16px;padding:10px 12px;cursor:pointer;user-select:none;transition:transform .15s,background .15s,border-color .15s;box-shadow:0 7px 18px rgba(100,73,135,.10);font-weight:900;font-size:13px;min-height:42px}
+.btn:hover{background:#f7efff;border-color:#9670ba;transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{color:#392052;background:#ead9ff;border-color:#a87bd2}
+.btn.good{color:#245b3d;background:#dff8e9;border-color:#83c99e}
+.btn.warn{color:#604707;background:#fff0c7;border-color:#d9b84f}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.sidebar,.panel{background:rgba(255,255,255,.82);border:2px solid rgba(156,119,202,.18);box-shadow:var(--shadow);border-radius:var(--radius)}
+.sidebar{position:sticky;top:16px;align-self:start;padding:14px;overflow:hidden}
+.panel{padding:16px;min-width:0}
+.progress-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:12px;font-weight:900;color:#51475f}
+.bar{height:12px;background:#f0e8fa;border:1px solid #ddd0eb;border-radius:999px;overflow:hidden;margin-bottom:12px}
+.bar>div{height:100%;width:0;background:linear-gradient(90deg,#c9a6f1,#9be6d1);border-radius:999px;transition:width .35s}
+.steps{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.step{padding:10px;border-radius:15px;border:2px solid rgba(156,119,202,.14);background:rgba(255,255,255,.86);box-shadow:0 7px 20px rgba(100,73,135,.07);display:flex;gap:10px;align-items:flex-start;min-width:0}
+.step .badge{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-size:12px;font-weight:900;flex:0 0 auto;border:1px solid #dcc6f6;background:#f5edff;color:#4b3167}
+.step .meta{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.name{font-weight:900;font-size:12px;line-height:1.3;color:#352447}
+.desc{color:#5b5268;font-size:12px;line-height:1.25}
+.status{font-size:10px;font-weight:900;padding:6px 8px;border-radius:999px;border:1px solid #cbb9dd;background:#f5edfb;color:#51475f;white-space:nowrap}
+.status.open{color:#58328a;background:#eadbfa;border-color:#aa82cf}
+.status.done{color:#24683f;background:#ddf7e7;border-color:#82c79d}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 0 14px}
+.stage-head .left{display:flex;flex-direction:column;gap:8px;min-width:0}
+.stage-title{margin:0;font-size:20px;font-weight:900;color:#352447}
+.stage-sub{margin:0;color:#51475f;font-size:14px;line-height:1.4}
+.stage-side{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.hint{color:#51475f;font-size:13px;font-weight:600;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.hint-mark{width:22px;height:22px;border-radius:8px;border:1px solid #bca2d6;background:#eee3fb;flex:0 0 auto;position:relative}
+.hint-mark:before{content:"";position:absolute;width:6px;height:9px;border:1.5px solid #673b9b;border-radius:5px;left:7px;top:4px}
+.hint-mark:after{content:"";position:absolute;width:3px;height:3px;background:#673b9b;border-radius:50%;left:9px;top:15px}
+.stage-body{display:grid;gap:12px}
+.card-msg,.choice,.feedback{background:rgba(255,255,255,.86);border:2px solid rgba(156,119,202,.14);box-shadow:0 7px 20px rgba(100,73,135,.07);border-radius:18px}
+.card-msg{padding:14px}
+.scenario{display:flex;gap:12px;align-items:flex-start}
+.scenario-icon{width:42px;height:42px;border-radius:14px;border:1px solid #dcc6f6;background:#f5edff;display:grid;place-items:center;flex:0 0 auto;color:#673b9b;font-weight:950;font-size:12px}
+.scenario .text{flex:1;min-width:0}
+.label{font-weight:900;font-size:13px;margin:0 0 6px;color:#4b3167}
+.scenario-text{margin:0;color:#30283d;font-size:15px;font-weight:600;line-height:1.5}
+.choices{display:grid;grid-template-columns:1fr;gap:10px}
+.choice{text-align:left;width:100%;padding:13px 14px;border-radius:18px;color:#30283d;cursor:pointer;font-weight:800;font-size:14px;display:flex;gap:12px;align-items:flex-start;line-height:1.45;transition:transform .15s,background .15s,border-color .15s}
+.choice:hover:not(:disabled){background:#f7efff;border-color:#9670ba;transform:translateY(-2px)}
+.choice:disabled{opacity:.68;cursor:default}
+.dot{width:28px;height:28px;border-radius:9px;border:1px solid #bca2d6;background:#eee3fb;color:#4b3167;display:grid;place-items:center;font-size:12px;font-weight:900;flex:0 0 auto}
+.feedback{padding:12px;display:flex;gap:12px;align-items:flex-start}
+.feedback.good{background:#effff5;border-color:#9eddbb}
+.feedback.bad{background:#fff4f5;border-color:#f1a9b4}
+.ficon{width:34px;height:34px;border-radius:12px;background:#f5edff;border:1px solid #dcc6f6;display:grid;place-items:center;flex:0 0 auto;color:#673b9b;font-weight:950}
+.feedback.good .ficon{color:var(--green)}.feedback.bad .ficon{color:var(--red)}
+.ftext{min-width:0;flex:1}
+.ftitle{margin:0;font-weight:900;font-size:13px;color:#30283d}
+.fmsg{margin:4px 0 0;color:#51475f;font-size:13px;font-weight:600;line-height:1.45}
+.footer-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:2px}
+.safety{flex:1;min-width:220px}
+.safety-inner{display:flex;gap:10px;align-items:flex-start;color:#51475f;font-size:13px;font-weight:600;line-height:1.4}
+.safety-mark{width:22px;height:22px;border-radius:8px;border:1px solid #bca2d6;background:#eee3fb;flex:0 0 auto;position:relative}
+.safety-mark:before{content:"";position:absolute;left:6px;top:4px;width:8px;height:10px;border:1.5px solid #673b9b;border-radius:6px 6px 3px 3px}
+.safety-mark:after{content:"";position:absolute;left:9px;top:9px;width:3px;height:4px;background:#673b9b;border-radius:2px}
+.footer-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.modal-backdrop{position:fixed;inset:0;background:rgba(45,32,60,.35);display:none;align-items:center;justify-content:center;padding:18px;z-index:999}
+.modal{width:min(620px,100%);max-height:90vh;overflow:auto;border-radius:22px;border:2px solid #dcc6f6;background:rgba(255,255,255,.97);box-shadow:0 30px 90px rgba(75,48,100,.22);padding:18px;color:#30283d}
+.modal h2{margin:0;font-size:20px;color:#352447}
+.modal p{margin:9px 0 0;color:#51475f;font-size:14px;line-height:1.5;font-weight:600}
+.modal .grid{display:grid;gap:10px;margin-top:14px}
+.statline{border:1px solid #dcc6f6;background:#faf7ff;border-radius:14px;padding:11px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.statline .k{color:#5b5268;font-weight:900;font-size:12px}.statline .v{color:#352447;font-weight:900;font-size:13px;text-align:right}
+.modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap}
+@media(max-width:980px){.app{grid-template-columns:1fr}.sidebar{position:static}.steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){body{padding:10px}.app{gap:12px}header{display:grid;gap:12px}.top-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.top-actions .btn{width:100%;padding:11px 8px;font-size:12px}.sidebar,.panel{padding:13px}.steps{grid-template-columns:1fr;gap:7px}.step{padding:9px}.stage-head{display:grid;gap:10px}.stage-side{align-items:flex-start}.stage-title{font-size:19px}.stage-sub,.hint{font-size:14px}.scenario-text{font-size:16px}.choice{font-size:15px;padding:14px}.footer-row{display:grid}.safety{min-width:0}.footer-actions{display:grid;grid-template-columns:1fr 1fr}.footer-actions .btn{width:100%;padding:12px 8px}.modal{padding:15px}}
+@media(max-width:370px){.footer-actions{grid-template-columns:1fr}.status{font-size:9px;padding:5px 6px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="title">
+  <h1>CyberAventura: <span>Guardianes de Internet</span></h1>
+  <p>¡Conviértete en un Guardián de Internet! Supera retos, aprende trucos y consigue insignias.<br><strong>Regla de oro:</strong> si algo te incomoda, <strong>detente y pide ayuda a un adulto</strong>.</p>
+ </div>
+ <div class="top-actions">
+  <button class="btn warn" id="btnHowTo" type="button">Cómo se juega</button>
+  <button class="btn" id="btnReset" type="button">Reiniciar</button>
+  <button class="btn primary" id="btnRestartStage" type="button" style="display:none">Reintentar estación</button>
+ </div>
+</header>
+<aside class="sidebar" aria-label="Progreso del juego">
+ <div class="progress-title"><span>Progreso</span><span id="progressText">0/6 misiones</span></div>
+ <div class="bar" role="progressbar" aria-label="Progreso de misiones" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="progressTrack"><div id="progressBar"></div></div>
+ <div class="steps" id="stepsList"></div>
+</aside>
+<main class="panel main" aria-live="polite">
+ <div class="stage-head">
+  <div class="left"><h2 class="stage-title" id="stageTitle">Estación</h2><p class="stage-sub" id="stageSubtitle">Preparando la misión...</p></div>
+  <div class="stage-side"><div class="status open" id="stageStatus">Abierta</div><div class="hint"><span class="hint-mark" aria-hidden="true"></span><div id="stageHint">Toca una opción para avanzar.</div></div></div>
+ </div>
+ <div class="stage-body">
+  <section class="card-msg"><div class="scenario"><div class="scenario-icon" id="scenarioIcon" aria-hidden="true">01</div><div class="text"><p class="label" id="scenarioLabel">Historia</p><p class="scenario-text" id="scenarioText"></p></div></div></section>
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="feedback" style="display:none" role="status" aria-live="polite"><div class="ficon" id="feedbackIcon" aria-hidden="true">✓</div><div class="ftext"><p class="ftitle" id="feedbackTitle">¡Bien!</p><p class="fmsg" id="feedbackMsg"></p></div></div>
+  <div class="footer-row">
+   <div class="safety"><div class="safety-inner"><span class="safety-mark" aria-hidden="true"></span><div id="safetyRule">Si te piden contraseñas, datos personales o te presionan, es sospechoso.</div></div></div>
+   <div class="footer-actions"><button class="btn good" id="btnNext" type="button" disabled>Continuar</button><button class="btn" id="btnSkip" type="button">(Profe) Saltar</button></div>
+  </div>
+ </div>
+</main>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+ <div class="modal"><h2 id="modalTitle">Cómo se juega</h2><p id="modalIntro">En cada reto ayudarás a un personaje y tendrás que elegir la decisión más segura. Si te equivocas, aprenderás la razón y podrás reintentar.</p><div class="grid" id="modalGrid"><div class="statline"><div class="k">Meta</div><div class="v">Completar 6 retos de Guardianes</div></div><div class="statline"><div class="k">Respuesta correcta</div><div class="v">Ganas una insignia de Guardián</div></div><div class="statline"><div class="k">Consejo</div><div class="v">Parar, pensar y pedir ayuda</div></div></div><div class="actions" id="modalActions"><button class="btn primary" id="btnCloseModal" type="button">Entendido</button></div></div>
+</div>
+<script>
+"use strict";
+const STAGES=[
+{id:1,icon:"01",title:"Reto 1: El mensaje del Unicornio",subtitle:"Detecta una trampa antes de tocarla",scenarioIcon:"01",scenarioLabel:"Mensaje sorpresa",scenarioText:"Luna recibe: “¡Ganaste 100 monedas! Entra aquí y escribe tu contraseña AHORA”. ¿Qué debería hacer?",hint:"Las prisas y los premios increíbles pueden ser señales de una trampa.",choices:[
+{text:"No abrir el enlace y contárselo a un adulto de confianza.",correct:true,feedbackGood:"¡Excelente! No abrir enlaces sospechosos y pedir ayuda es una decisión segura."},
+{text:"Entrar rápido para no perder el premio.",correct:false,feedbackBad:"La prisa puede hacer que tomemos malas decisiones. Primero hay que comprobarlo."},
+{text:"Escribir la contraseña para comprobar si el premio es real.",correct:false,feedbackBad:"Nunca necesitas entregar tu contraseña para comprobar un premio."}],safetyRule:"Mensaje inesperado + premio + prisa = detente y pide ayuda."},
+{id:2,icon:"02",title:"Reto 2: El Dragón de las Contraseñas",subtitle:"Construye una contraseña fuerte",scenarioIcon:"02",scenarioLabel:"La guarida secreta",scenarioText:"Dragón Byte necesita proteger su cuenta. ¿Cuál sería una mejor contraseña?",hint:"Una buena contraseña es difícil de adivinar y no usa datos fáciles de conocer.",choices:[
+{text:"firulais",correct:false,feedbackBad:"Un nombre o palabra sencilla puede ser fácil de adivinar."},
+{text:"12062015",correct:false,feedbackBad:"Una fecha puede ser fácil de descubrir."},
+{text:"Una frase larga y única con ayuda de un adulto",correct:true,feedbackGood:"¡Muy bien! Una frase larga y única puede ser más difícil de adivinar."}],safetyRule:"Las contraseñas son secretos: no las compartas con amigos ni desconocidos."},
+{id:3,icon:"03",title:"Reto 3: El Gatito Detective",subtitle:"Protege tu información personal",scenarioIcon:"03",scenarioLabel:"¿Qué guardarías en secreto?",scenarioText:"Michi quiere crear un perfil para un juego. ¿Qué información debería evitar publicar?",hint:"Piensa: ¿podría esta información ayudar a un desconocido a encontrarte?",choices:[
+{text:"Tu color favorito.",correct:false,feedbackBad:"Un gusto general normalmente no revela dónde vives."},
+{text:"Tu dirección, número de teléfono y ubicación exacta.",correct:true,feedbackGood:"¡Correcto! Esa información es personal y debe mantenerse privada."},
+{text:"Tu personaje favorito de una película.",correct:false,feedbackBad:"Eso no suele revelar dónde vives. Aun así, piensa antes de publicar."}],safetyRule:"Dirección, teléfono, escuela, ubicación exacta y rutinas son datos que debemos proteger."},
+{id:4,icon:"04",title:"Reto 4: Misión Buen Clic",subtitle:"Aprende a mirar antes de descargar",scenarioIcon:"04",scenarioLabel:"Aterrizaje sospechoso",scenarioText:"Aparece: “DESCARGA ESTE JUEGO GRATIS”. Después pide instalar un programa desconocido. ¿Qué haces?",hint:"Antes de descargar: para, mira y pregunta.",choices:[
+{text:"Descargarlo porque dice que es gratis.",correct:false,feedbackBad:"Que algo sea gratis no significa que sea seguro."},
+{text:"Hacer clic muy rápido antes de que desaparezca.",correct:false,feedbackBad:"Las prisas son una mala compañera en Internet."},
+{text:"Cerrar la ventana y consultar con un adulto antes de instalar.",correct:true,feedbackGood:"¡Buen clic! Parar y preguntar antes de instalar protege el dispositivo."}],safetyRule:"Antes de descargar: DETENTE → REVISA → PREGUNTA."},
+{id:5,icon:"05",title:"Reto 5: El Superpoder de Pedir Ayuda",subtitle:"Actúa ante mensajes incómodos",scenarioIcon:"05",scenarioLabel:"Algo no se siente bien",scenarioText:"Un desconocido en un juego pide fotos y dice: “No se lo cuentes a nadie”. ¿Cuál es la mejor reacción?",hint:"Tu superpoder más importante es pedir ayuda cuando algo te incomoda.",choices:[
+{text:"Mandar las fotos para que deje de insistir.",correct:false,feedbackBad:"No tienes que hacer algo que te incomoda. Nunca envíes fotos personales por presión."},
+{text:"Guardar el secreto porque la persona lo pidió.",correct:false,feedbackBad:"Los secretos que te hacen sentir incómodo deben contarse a un adulto de confianza."},
+{text:"No enviar nada, bloquear o reportar y contárselo a un adulto.",correct:true,feedbackGood:"¡Eso es actuar como un verdadero Guardián! Aléjate, bloquea o reporta y busca ayuda."}],safetyRule:"Si alguien te incomoda o te pide guardar un secreto extraño: aléjate y cuéntaselo a un adulto."},
+{id:6,icon:"06",title:"Reto 6: La Gran Prueba del Guardián",subtitle:"Usa todo lo que aprendiste",scenarioIcon:"06",scenarioLabel:"Última misión",scenarioText:"Aparece: “Tu cuenta está en peligro. Haz clic, escribe tus datos y envía el código”. ¿Qué haría un Guardián?",hint:"Recuerda tus poderes: parar, pensar, proteger tus datos y pedir ayuda.",choices:[
+{text:"Hacer clic enseguida porque parece una emergencia.",correct:false,feedbackBad:"Un mensaje urgente puede intentar asustarte para que actúes sin pensar."},
+{text:"Parar, no compartir datos ni códigos y pedir a un adulto que ayude a comprobarlo.",correct:true,feedbackGood:"¡MISIÓN COMPLETADA! Has usado tus superpoderes: parar, pensar y pedir ayuda."},
+{text:"Enviar el código para demostrar que la cuenta es mía.",correct:false,feedbackBad:"Los códigos de seguridad son secretos. No los compartas."}],safetyRule:"SUPERPODER FINAL: PARA → PIENSA → NO COMPARTAS → PIDE AYUDA."}
+];
+const $=s=>document.querySelector(s);
+const stepsList=$("#stepsList"),progressBar=$("#progressBar"),progressText=$("#progressText");
+const stageTitle=$("#stageTitle"),stageSubtitle=$("#stageSubtitle"),scenarioIcon=$("#scenarioIcon"),scenarioLabel=$("#scenarioLabel"),scenarioText=$("#scenarioText"),stageHint=$("#stageHint"),choicesEl=$("#choices"),feedback=$("#feedback"),feedbackIcon=$("#feedbackIcon"),feedbackTitle=$("#feedbackTitle"),feedbackMsg=$("#feedbackMsg");
+const btnNext=$("#btnNext"),btnReset=$("#btnReset"),btnRestartStage=$("#btnRestartStage"),btnSkip=$("#btnSkip"),stageStatus=$("#stageStatus"),safetyRule=$("#safetyRule"),modalBackdrop=$("#modalBackdrop");
+let currentStageIndex=0,solved=new Set(),attempts=0,correctCount=0;
+function buildSteps(){
+ stepsList.replaceChildren();
+ STAGES.forEach((s,i)=>{
+  const done=solved.has(s.id),active=i===currentStageIndex;
+  const step=document.createElement("div");step.className="step";
+  const badge=document.createElement("div");badge.className="badge";badge.textContent=done?"OK":s.icon;
+  const meta=document.createElement("div");meta.className="meta";
+  const name=document.createElement("div");name.className="name";name.textContent=s.title;
+  const desc=document.createElement("div");desc.className="desc";desc.textContent=s.subtitle;meta.append(name,desc);
+  const status=document.createElement("div");status.className="status "+(done?"done":active?"open":"");status.textContent=done?"Completada":active?"En juego":"Bloqueada";
+  step.append(badge,meta,status);stepsList.append(step);
+ });
+}
+function setProgress(){const n=solved.size;progressText.textContent=`${n}/6 misiones`;progressBar.style.width=`${n/6*100}%`;$("#progressTrack").setAttribute("aria-valuenow",String(n));buildSteps()}
+function clearFeedback(){feedback.style.display="none";feedback.className="feedback";btnNext.disabled=true}
+function showFeedback(good,title,msg){feedback.style.display="flex";feedback.className="feedback "+(good?"good":"bad");feedbackIcon.textContent=good?"✓":"!";feedbackTitle.textContent=title;feedbackMsg.textContent=msg}
+function lockChoices(lock){choicesEl.querySelectorAll("button").forEach(b=>b.disabled=lock)}
+function renderStage(){
+ clearFeedback();btnRestartStage.style.display="none";
+ const s=STAGES[currentStageIndex],done=solved.has(s.id);
+ stageTitle.textContent=s.title;stageSubtitle.textContent=s.subtitle;scenarioIcon.textContent=s.scenarioIcon;scenarioLabel.textContent=s.scenarioLabel;scenarioText.textContent=s.scenarioText;stageHint.textContent=s.hint;safetyRule.textContent=s.safetyRule;
+ stageStatus.textContent=done?"Completada":"Abierta";stageStatus.className="status "+(done?"done":"open");
+ choicesEl.replaceChildren();
+ s.choices.forEach((c,i)=>{
+  const b=document.createElement("button");b.type="button";b.className="choice";b.disabled=done;
+  const d=document.createElement("span");d.className="dot";d.textContent=String.fromCharCode(65+i);
+  const t=document.createElement("span");t.textContent=c.text;b.append(d,t);
+  b.addEventListener("click",()=>{
+   attempts++;
+   if(c.correct){solved.add(s.id);correctCount++;lockChoices(true);showFeedback(true,"¡Insignia desbloqueada!",c.feedbackGood);btnNext.disabled=false;stageStatus.textContent="Completada";stageStatus.className="status done";setProgress()}
+   else{showFeedback(false,"Inténtalo de nuevo",c.feedbackBad);btnRestartStage.style.display="inline-flex";stageStatus.textContent="Puedes reintentar";stageStatus.className="status open"}
+  });
+  choicesEl.append(b);
+ });
+ btnNext.disabled=!done;
+ btnNext.onclick=()=>{
+  if(!solved.has(s.id))return;
+  const next=STAGES.findIndex((x,i)=>i>currentStageIndex&&!solved.has(x.id));
+  if(solved.size===STAGES.length){showWin();return}
+  currentStageIndex=next>=0?next:STAGES.findIndex(x=>!solved.has(x.id));renderStage();setProgress();
+  if(matchMedia("(max-width:980px)").matches)document.querySelector(".main").scrollIntoView({behavior:"smooth",block:"start"});
+ };
+ btnRestartStage.onclick=()=>renderStage();
+ buildSteps();
+}
+function openModal(){modalBackdrop.style.display="flex"}
+function closeModal(){modalBackdrop.style.display="none"}
+function showHowTo(){
+ $("#modalTitle").textContent="Cómo se juega";
+ $("#modalIntro").textContent="En cada reto ayudarás a un personaje y tendrás que elegir la decisión más segura. Si te equivocas, aprenderás la razón y podrás reintentar.";
+ $("#modalGrid").innerHTML='<div class="statline"><div class="k">Meta</div><div class="v">Completar 6 retos de Guardianes</div></div><div class="statline"><div class="k">Respuesta correcta</div><div class="v">Ganas una insignia de Guardián</div></div><div class="statline"><div class="k">Consejo</div><div class="v">Parar, pensar y pedir ayuda</div></div>';
+ $("#modalActions").innerHTML='<button class="btn primary" id="btnCloseModal" type="button">Entendido</button>';$("#btnCloseModal").onclick=closeModal;openModal();
+}
+function showWin(){
+ $("#modalTitle").textContent="¡CyberAventura completada!";
+ $("#modalIntro").textContent="¡Lo lograste! Has conseguido todas las insignias y demostrado que sabes tomar decisiones seguras en Internet.";
+ $("#modalGrid").innerHTML=`<div class="statline"><div class="k">Insignias ganadas</div><div class="v">${solved.size} de 6</div></div><div class="statline"><div class="k">Respuestas correctas</div><div class="v">${correctCount}</div></div><div class="statline"><div class="k">Intentos realizados</div><div class="v">${attempts}</div></div>`;
+ $("#modalActions").innerHTML='<button class="btn" id="btnPlayAgain" type="button">Jugar de nuevo</button><button class="btn primary" id="btnCloseModal" type="button">Cerrar</button>';$("#btnPlayAgain").onclick=()=>{closeModal();resetGame()};$("#btnCloseModal").onclick=closeModal;openModal();
+}
+function resetGame(){currentStageIndex=0;solved=new Set();attempts=0;correctCount=0;setProgress();renderStage()}
+$("#btnHowTo").addEventListener("click",showHowTo);btnReset.addEventListener("click",resetGame);
+btnSkip.addEventListener("click",()=>{if(currentStageIndex<5){currentStageIndex++;renderStage();setProgress()}else showFeedback(false,"Último reto","Ya estás en el último reto. Puedes resolverlo o reiniciar el juego.")});
+modalBackdrop.addEventListener("click",e=>{if(e.target===modalBackdrop)closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+setProgress();renderStage();
+</script>
+</body>
+</html>
